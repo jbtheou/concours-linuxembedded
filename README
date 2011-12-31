@@ -1,0 +1,87 @@
+Partie 2 du projet d'optimisation du temps de Boot sur Mini2440
+
+
+
+     .7ZZO88.O .............................................
+   ..$ZZOZ.88:........... ZZZO.................... .........
+ . .$$ZO8.,:,:... ......,$Z..  Z........... ~DNNNNN+. ......
+... $ZO8,,8~~~+.........ZZ..... ..........,DNNMNNNDNN=......
+....OOO88:~=I?++?. .....ZO..Z...:.........:..  7... .MI.....
+... 7O8+7+++====+I......O..,,,=:=....... 8........ ..,N.....
+......88+II?+??I+......D8O888888D8.......+. .M,=:M,.,:M.....
+....ZOO88ZZ8:..........DD88888~:~ND......M..:+++?I+:::M. ...
+.ZZZODN+::,,:Z+ ......MNDDDDD,,,,,I......:Z:IZIZ$Z$I+NN.....
+OOOO~O:,,.,,:~:....... DDDDD,,,..,I.....~N.,:~+I??+~++MN....
+.DDDO8:,,,:~~=+??7~....NNNNN,,....?.....N?:+===~I$I+IIMN....
+.OOOO,????++++7??I.....+NNNN,,...,7.....++777I$777777I:M ...
+.OO8++??I$IIIO$I~........MMM:,,.I+I..... .7777$8$7777..... .
+..:III??IZ7I+===:.........I++..............~DDN8D88D$77?~...
+......7I7~,.................................................
+  . . .... .................................................
+
+
+Ce projet compile et fonctionne sur une debian squeeze (test via chroot)
+
+####################### PRÉ-REQUIS ######################################################
+
+Pour compiler, le projet a besoin des paquets suivants (En plus de l'installation de base de squeeze) :
+
+bzip2, git, make, gcc, gawk, bison, flex, texinfo, automake, libtool, lzma, subversion, libncurses-dev, libstdc++6-4.4-dev, zlib1g-dev, libsdl-dev
+
+
+Installable (debian et autres) via la commande 
+
+
+######################
+
+apt-get install bzip2 git make gcc gawk bison flex texinfo automake libtool lzma subversion libncurses-dev libstdc++6-4.4-dev zlib1g-dev libsdl-dev
+
+######################
+
+### Compilation 
+
+Pour compiler le projet, il suffit d'exécuter le script install.sh via la commande ./install.sh dans le répertoire du projet. 
+
+Ce script permet :
+
+- Compiler les différents éléments (toolchain, bootloader, kernel, etc)
+- Appliquer les différents patchs avant la compilation
+
+À la fin, les images sont disponibles (bootloader+kernel) dans le dossier Image_finale
+
+### Exécution 
+
+Il faut installer le bootloader et le noyau à l'aide de supervivi (disponible sur la NOR). 
+
+##### FriendlyARM BIOS 2.0 for 2440 #####
+[x] format NAND FLASH for Linux
+[v] Download vivi 
+[k] Download linux kernel 
+[y] Download root_yaffs image 
+[a] Absolute User Application
+[n] Download Nboot for WinCE 
+[l] Download WinCE boot-logo
+[w] Download WinCE NK.bin 
+[d] Download & Run 
+[z] Download zImage into RAM 
+[g] Boot linux from RAM 
+[f] Format the nand flash 
+[b] Boot the system 
+[s] Set the boot parameters 
+[u] Backup NAND Flash to HOST through USB(upload) 
+[r] Restore NAND Flash from HOST through USB 
+[q] Goto shell of vivi 
+[i] Version: 1026-2K
+Enter your selection: 
+
+
+-> Envoyer les images à l'aide de boot_usb 
+
+-> Sur la carte : Option v via minicom dans super vivi pour le bootloader
+-> Sur le PC :  ./s3c2410_boot_usb vboot.bin
+-> Sur la carte : Option k via minicom dans super vivi pour le noyau
+-> Sur le PC :  ./s3c2410_boot_usb Image
+
+Mettre le jumper sur Nand, et relancer la maquette, avec la carte SD et le cable réseau. 
+
+

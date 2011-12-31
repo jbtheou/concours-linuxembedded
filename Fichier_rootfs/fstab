@@ -1,0 +1,1 @@
+/dev/block/mmcblk0p1 /mnt/sdcard ext4 noatime,nodiratime,ro,noload 0 0

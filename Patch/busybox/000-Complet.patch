@@ -1,0 +1,307 @@
+diff -rupN busybox-1.13.3-old//init/init.c busybox-1.13.3/init/init.c
+--- busybox-1.13.3-old//init/init.c	2009-02-26 11:56:00.000000000 +0000
++++ busybox-1.13.3/init/init.c	2011-12-15 20:46:43.998977061 +0000
+@@ -462,7 +462,7 @@ static pid_t run(const struct init_actio
+ 	}
+ 
+ 	/* Log the process name and args */
+-	message(L_LOG, "starting pid %d, tty '%s': '%s'",
+-			  getpid(), a->terminal, a->command);
++	//message(L_LOG, "starting pid %d, tty '%s': '%s'",
++ 	//		  getpid(), a->terminal, a->command);
+ 
+ 	/* Now run it.  The new program will take over this PID,
+@@ -838,7 +838,7 @@ int init_main(int argc UNUSED_PARAM, cha
+ 		xsetenv("RUNLEVEL", argv[1]);
+ 
+ 	/* Hello world */
+-	message(MAYBE_CONSOLE | L_LOG, "init started: %s", bb_banner);
++	//message(MAYBE_CONSOLE | L_LOG, "init started: %s", bb_banner);
+ 
+ 	/* Make sure there is enough memory to do something useful. */
+ 	if (ENABLE_SWAPONOFF) {
+
+--- busybox-1.13.3-old//init/init.c	2011-12-20 17:35:12.339064060 +0100
++++ busybox-1.13.3/init/init.c	2011-12-20 17:35:16.082017268 +0100
+@@ -47,6 +47,54 @@
+ #define SHUTDOWN    0x40
+ #define RESTART     0x80
+ 
++
++/*
++ * Hack rapide pas très joli pour retirer la gestion des exceptions (unwind)
++ *
++ *
++ */
++
++void __libc_init_array(){}
++void _Unwind_VRS_Get(){}
++void _Unwind_VRS_Set(){}
++void __aeabi_unwind_cpp_pr2(){}
++void __aeabi_unwind_cpp_pr1(){}
++void __aeabi_unwind_cpp_pr0(){}
++void _Unwind_VRS_Pop(){}
++void _Unwind_GetCFA(){}
++void __gnu_Unwind_RaiseException(){}
++void __gnu_Unwind_ForcedUnwind(){}
++void __gnu_Unwind_Resume(){}
++void __gnu_Unwind_Resume_or_Rethrow(){}
++void _Unwind_Complete(){}
++void _Unwind_DeleteException(){}
++void __gnu_Unwind_Backtrace(){}
++void __restore_core_regs(){}
++void restore_core_regs(){}
++void __gnu_Unwind_Restore_VFP(){}
++void __gnu_Unwind_Save_VFP(){}
++void __gnu_Unwind_Restore_VFP_D(){}
++void __gnu_Unwind_Save_VFP_D(){}
++void __gnu_Unwind_Restore_VFP_D_16_to_31(){}
++void __gnu_Unwind_Save_VFP_D_16_to_31(){}
++void __gnu_Unwind_Restore_WMMXD(){}
++void __gnu_Unwind_Save_WMMXD(){}
++void __gnu_Unwind_Restore_WMMXC(){}
++void __gnu_Unwind_Save_WMMXC(){}
++void ___Unwind_RaiseException(){}
++void _Unwind_RaiseException(){}
++void _Unwind_Resume(){}
++void ___Unwind_Resume(){}
++void _Unwind_Resume_or_Rethrow(){}
++void ___Unwind_Resume_or_Rethrow(){}
++void _Unwind_ForcedUnwind(){}
++void ___Unwind_ForcedUnwind(){}
++void ___Unwind_Backtrace(){}
++void _Unwind_Backtrace(){}
++
++
++/* ********************** */
++
+ /* Set up a linked list of init_actions, to be read from inittab */
+ struct init_action {
+ 	struct init_action *next;
+
+diff -rupN busybox-1.13.3-old//libbb/bb_strtod.c busybox-1.13.3/libbb/bb_strtod.c
+--- busybox-1.13.3-old//libbb/bb_strtod.c	2009-02-26 11:47:08.000000000 +0000
++++ busybox-1.13.3/libbb/bb_strtod.c	2011-12-15 20:45:37.733805488 +0000
+@@ -8,7 +8,7 @@
+  */
+ 
+ #include "libbb.h"
+-#include <math.h>  /* just for HUGE_VAL */
++//#include <math.h>  /* just for HUGE_VAL */
+ 
+ #define NOT_DIGIT(a) (((unsigned char)(a-'0')) > 9)
+ 
+@@ -29,7 +29,7 @@ double FAST_FUNC bb_strtod(const char *a
+ 		if (isalnum(endptr[0]) || errno) {
+  err:
+ 			errno = ERANGE;
+-			return HUGE_VAL;
++			//return HUGE_VAL;
+ 		}
+ 		/* good number, just suspicious terminator */
+ 		errno = EINVAL;
+diff -rupN busybox-1.13.3-old//networking/udhcp/clientpacket.c busybox-1.13.3/networking/udhcp/clientpacket.c
+--- busybox-1.13.3-old//networking/udhcp/clientpacket.c	2009-02-26 11:46:21.000000000 +0000
++++ busybox-1.13.3/networking/udhcp/clientpacket.c	2011-12-15 20:45:37.734805476 +0000
+@@ -138,7 +138,7 @@ int FAST_FUNC send_discover(uint32_t xid
+ 
+ 	add_param_req_option(&packet);
+ 
+-	bb_info_msg("Sending discover...");
++	//bb_info_msg("Sending discover...");
+ 	return raw_bcast_from_client_config_ifindex(&packet);
+ }
+ 
+@@ -160,7 +160,7 @@ int FAST_FUNC send_select(uint32_t xid,
+ 	add_param_req_option(&packet);
+ 
+ 	addr.s_addr = requested;
+-	bb_info_msg("Sending select for %s...", inet_ntoa(addr));
++	//bb_info_msg("Sending select for %s...", inet_ntoa(addr));
+ 	return raw_bcast_from_client_config_ifindex(&packet);
+ }
+ 
+diff -rupN busybox-1.13.3-old//networking/udhcp/dhcpc.c busybox-1.13.3/networking/udhcp/dhcpc.c
+--- busybox-1.13.3-old//networking/udhcp/dhcpc.c	2009-02-26 11:46:21.000000000 +0000
++++ busybox-1.13.3/networking/udhcp/dhcpc.c	2011-12-15 20:45:37.736805452 +0000
+@@ -62,8 +62,8 @@ static void perform_renew(void)
+ 	case REBINDING:
+ 		state = RENEW_REQUESTED;
+ 		break;
+-	case RENEW_REQUESTED: /* impatient are we? fine, square 1 */
+-		udhcp_run_script(NULL, "deconfig");
++	//case RENEW_REQUESTED: /* impatient are we? fine, square 1 */
++	//	udhcp_run_script(NULL, "deconfig");
+ 	case REQUESTING:
+ 	case RELEASED:
+ 		change_listen_mode(LISTEN_RAW);
+@@ -89,7 +89,7 @@ static void perform_release(uint32_t req
+ 		bb_info_msg("Unicasting a release of %s to %s",
+ 				inet_ntoa(temp_addr), buffer);
+ 		send_release(server_addr, requested_ip); /* unicast */
+-		udhcp_run_script(NULL, "deconfig");
++		//udhcp_run_script(NULL, "deconfig");
+ 	}
+ 	bb_info_msg("Entering released state");
+ 
+@@ -291,7 +291,7 @@ int udhcpc_main(int argc UNUSED_PARAM, c
+ 	write_pidfile(client_config.pidfile);
+ 
+ 	/* Goes to stdout (unless NOMMU) and possibly syslog */
+-	bb_info_msg("%s (v"BB_VER") started", applet_name);
++	//bb_info_msg("%s (v"BB_VER") started", applet_name);
+ 
+ 	/* if not set, and not suppressed, setup the default client ID */
+ 	if (!client_config.clientid && !(opt & OPT_C)) {
+@@ -307,7 +307,7 @@ int udhcpc_main(int argc UNUSED_PARAM, c
+ 	udhcp_sp_setup();
+ 
+ 	state = INIT_SELECTING;
+-	udhcp_run_script(NULL, "deconfig");
++	//udhcp_run_script(NULL, "deconfig");
+ 	change_listen_mode(LISTEN_RAW);
+ 	packet_num = 0;
+ 	timeout = 0;
+@@ -396,8 +396,8 @@ int udhcpc_main(int argc UNUSED_PARAM, c
+ 					continue;
+ 				}
+ 				/* timed out, go back to init state */
+-				if (state == RENEW_REQUESTED)
+-					udhcp_run_script(NULL, "deconfig");
++				/*if (state == RENEW_REQUESTED)
++					udhcp_run_script(NULL, "deconfig");*/
+ 				change_listen_mode(LISTEN_RAW);
+ 				/* "discover...select...discover..." loops
+ 				 * were seen in the wild. Treat them similarly
+@@ -438,7 +438,7 @@ int udhcpc_main(int argc UNUSED_PARAM, c
+ 				}
+ 				/* Timed out, enter init state */
+ 				bb_info_msg("Lease lost, entering init state");
+-				udhcp_run_script(NULL, "deconfig");
++				//udhcp_run_script(NULL, "deconfig");
+ 				change_listen_mode(LISTEN_RAW);
+ 				state = INIT_SELECTING;
+ 				/*timeout = 0; - already is */
+@@ -551,8 +551,8 @@ int udhcpc_main(int argc UNUSED_PARAM, c
+ 								"(got ARP reply), declining");
+ 							send_decline(xid, server_addr, packet.yiaddr);
+ 
+-							if (state != REQUESTING)
+-								udhcp_run_script(NULL, "deconfig");
++							/*if (state != REQUESTING)
++								udhcp_run_script(NULL, "deconfig");*/
+ 							change_listen_mode(LISTEN_RAW);
+ 							state = INIT_SELECTING;
+ 							requested_ip = 0;
+@@ -568,8 +568,8 @@ int udhcpc_main(int argc UNUSED_PARAM, c
+ 					{
+ 						struct in_addr temp_addr;
+ 						temp_addr.s_addr = packet.yiaddr;
+-						bb_info_msg("Lease of %s obtained, lease time %u",
+-							inet_ntoa(temp_addr), (unsigned)lease_seconds);
++						/*bb_info_msg("Lease of %s obtained, lease time %u",
++							inet_ntoa(temp_addr), (unsigned)lease_seconds);*/
+ 					}
+ 					requested_ip = packet.yiaddr;
+ 					udhcp_run_script(&packet,
+@@ -596,8 +596,8 @@ int udhcpc_main(int argc UNUSED_PARAM, c
+ 					/* return to init state */
+ 					bb_info_msg("Received DHCP NAK");
+ 					udhcp_run_script(&packet, "nak");
+-					if (state != REQUESTING)
+-						udhcp_run_script(NULL, "deconfig");
++					/*if (state != REQUESTING)
++						udhcp_run_script(NULL, "deconfig");*/
+ 					change_listen_mode(LISTEN_RAW);
+ 					sleep(3); /* avoid excessive network traffic */
+ 					state = INIT_SELECTING;
+diff -rupN busybox-1.13.3-old//scripts/individual busybox-1.13.3/scripts/individual
+--- busybox-1.13.3-old//scripts/individual	2009-02-26 11:46:30.000000000 +0000
++++ busybox-1.13.3/scripts/individual	2011-12-15 20:45:37.737805440 +0000
+@@ -57,10 +57,10 @@ function extra_libraries()
+   substithing " ip " "networking/libiproute/libiproute.a" "$1"
+ 
+   # What needs -libm?
+-  substithing " awk dc " "-lm" "$1"
++  #substithing " awk dc " "-lm" "$1"
+ 
+   # What needs -lcrypt?
+-  substithing " httpd vlock " "-lcrypt" "$1"
++  #substithing " httpd vlock " "-lcrypt" "$1"
+ }
+ 
+ # Query applets.h to figure out which applets need special treatment
+diff -rupN busybox-1.13.3-old//scripts/trylink busybox-1.13.3/scripts/trylink
+--- busybox-1.13.3-old//scripts/trylink	2009-02-26 11:46:30.000000000 +0000
++++ busybox-1.13.3/scripts/trylink	2011-12-15 20:45:37.739805416 +0000
+@@ -106,16 +106,15 @@ LDLIBS=`echo "$LDLIBS" | xargs -n1 | sor
+ echo "Trying libraries: $LDLIBS"
+ # "lib1 lib2 lib3" -> "-llib1 -llib2 -llib3"
+ l_list=`echo "$LDLIBS" | sed -e 's/ / -l/g' -e 's/^/-l/' -e 's/^-l$//'`
+-test "x$l_list" != "x" && l_list="-Wl,--start-group $l_list -Wl,--end-group"
++test "x" != "x" && l_list="-Wl,--start-group  -Wl,--end-group"
+ try $CC $CFLAGS $LDFLAGS \
+ 	-o $EXE \
+ 	-Wl,--sort-common \
+ 	$SORT_SECTION \
+ 	$GC_SECTIONS \
+ 	-Wl,--start-group $O_FILES $A_FILES -Wl,--end-group \
+-	$l_list \
+ || {
+-    echo "Failed: $l_list"
++    echo "Failed:"
+     cat $EXE.out
+     exit 1
+ }
+@@ -130,15 +129,14 @@ while test "$LDLIBS"; do
+ 	without_one=`echo " $LDLIBS " | sed "s/ $one / /g" | xargs`
+ 	# "lib1 lib2 lib3" -> "-llib1 -llib2 -llib3"
+ 	l_list=`echo "$without_one" | sed -e 's/ / -l/g' -e 's/^/-l/' -e 's/^-l$//'`
+-	test x"$l_list" != x"" && l_list="-Wl,--start-group $l_list -Wl,--end-group"
+-	$debug && echo "Trying -l options: '$l_list'"
++	test x"" != x"" && l_list="-Wl,--start-group  -Wl,--end-group"
++	$debug && echo "Trying -l options: ''"
+ 	try $CC $CFLAGS $LDFLAGS \
+ 		-o $EXE \
+ 		-Wl,--sort-common \
+ 		$SORT_SECTION \
+ 		$GC_SECTIONS \
+-		-Wl,--start-group $O_FILES $A_FILES -Wl,--end-group \
+-		$l_list
++		-Wl,--start-group $O_FILES $A_FILES -Wl,--end-group
+ 	if test $? = 0; then
+ 	    echo " Library $one is not needed, excluding it"
+ 	    LDLIBS="$without_one"
+@@ -161,7 +159,7 @@ done
+ # Make the binary with final, minimal list of libs
+ echo "Final link with: ${LDLIBS:-<none>}"
+ l_list=`echo "$LDLIBS" | sed -e 's/ / -l/g' -e 's/^/-l/' -e 's/^-l$//'`
+-test "x$l_list" != "x" && l_list="-Wl,--start-group $l_list -Wl,--end-group"
++test "x" != "x" && l_list="-Wl,--start-group  -Wl,--end-group"
+ # --verbose gives us gobs of info to stdout (e.g. linker script used)
+ if ! test -f busybox_ldscript; then
+     try $CC $CFLAGS $LDFLAGS \
+@@ -170,7 +168,6 @@ if ! test -f busybox_ldscript; then
+ 	    $SORT_SECTION \
+ 	    $GC_SECTIONS \
+ 	    -Wl,--start-group $O_FILES $A_FILES -Wl,--end-group \
+-	    $l_list \
+ 	    -Wl,--warn-common \
+ 	    -Wl,-Map,$EXE.map \
+ 	    -Wl,--verbose \
+@@ -193,7 +190,6 @@ else
+ 	    $GC_SECTIONS \
+ 	    -Wl,-T,busybox_ldscript \
+ 	    -Wl,--start-group $O_FILES $A_FILES -Wl,--end-group \
+-	    $l_list \
+ 	    -Wl,--warn-common \
+ 	    -Wl,-Map,$EXE.map \
+ 	    -Wl,--verbose \
+@@ -226,7 +222,6 @@ if test "$CONFIG_BUILD_LIBBUSYBOX" = y;
+ 	    -Wl,--sort-common \
+ 	    $SORT_SECTION \
+ 	    -Wl,--start-group $A_FILES -Wl,--end-group \
+-	    $l_list \
+ 	    -Wl,--warn-common \
+ 	    -Wl,-Map,$EXE.map \
+ 	    -Wl,--verbose \

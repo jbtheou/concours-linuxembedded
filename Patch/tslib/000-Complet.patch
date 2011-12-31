@@ -1,0 +1,58 @@
+--- a/tslib/src/Makefile.am
++++ b/tslib/src/Makefile.am
+@@ -73,4 +73,4 @@
+ 
+ libts_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+ 		   -release $(LT_RELEASE) -export-dynamic
+-libts_la_LIBADD  = -ldl
++libts_la_LIBADD  = 
+--- a/tslib/src/ts_load_module.c
++++ b/tslib/src/ts_load_module.c
+@@ -17,7 +17,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+-#include <dlfcn.h>
++//#include <dlfcn.h>
+ 
+ #include "tslib-private.h"
+ 
+@@ -96,7 +96,7 @@
+ 	return info;
+ }
+ 
+-static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts, const char *module, const char *params)
++/*static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts, const char *module, const char *params)
+ {
+ 	tslib_module_init *init;
+ 	struct tslib_module_info *info;
+@@ -139,6 +139,7 @@
+ 
+ 	return info;
+ }
++*/
+ 
+ static int __ts_load_module(struct tsdev *ts, const char *module, const char *params, int raw)
+ {
+@@ -150,8 +151,8 @@
+ #endif
+ 
+ 	info = __ts_load_module_static(ts, module, params);
+-	if (!info)
+-		info = __ts_load_module_shared(ts, module, params);
++//	if (!info)
++//		info = __ts_load_module_shared(ts, module, params);
+ 	if (!info)
+ 		return -1;
+ 
+@@ -165,8 +166,8 @@
+ 		fprintf (stderr, "Can't attach %s\n", module);
+ #endif
+ 		info->ops->fini(info);
+-		if (info->handle)
+-			dlclose(info->handle);
++		//if (info->handle)
++			//dlclose(info->handle);
+ 	}
+ 
+ 	return ret;
