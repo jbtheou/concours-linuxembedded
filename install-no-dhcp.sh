@@ -147,7 +147,7 @@ mkdir -p usr/local/tslib/etc
 cp ../../../Fichier_rootfs/fstab etc/
 cp ../../../Fichier_rootfs/inittab etc/
 cp ../../../Fichier_rootfs/default.script etc/
-cp ../../../Fichier_rootfs/rcS etc/init.d/rcS
+cp ../../../Fichier_rootfs/rcS-no-dhcp etc/init.d/rcS
 cp ../../../Fichier_rootfs/ts.conf usr/local/tslib/etc
 
 ## Création des entrées dans dev
