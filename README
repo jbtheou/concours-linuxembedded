@@ -1,6 +1,7 @@
 Partie 2 du projet d'optimisation du temps de Boot sur Mini2440
 
-
+ATTENTION : Exécutez les scripts d'installations en mode super
+utilisateur (Création de node avec mknod entre autre)
 
      .7ZZO88.O .............................................
    ..$ZZOZ.88:........... ZZZO.................... .........
