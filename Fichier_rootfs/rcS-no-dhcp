@@ -1,0 +1,20 @@
+#! /bin/sh
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+ifconfig eth0 192.168.0.1
+mount proc	/proc -t proc
+export TSLIB_TSEVENTTYPE=INPUT
+export TSLIB_CONSOLEDEVICE=none
+export TSLIB_FBDEVICE=/dev/fb0
+export TSLIB_TSDEVICE=/dev/input/event0
+export TSLIB_CALIBFILE=/etc/pointercal
+export TSLIB_CONFFILE=/usr/local/tslib/etc/ts.conf
+grep "p1" /proc/diskstats > test
+while [ $? = 1 ]
+do
+	grep "p1" /proc/diskstats > test
+done
+mount -a
+IP="$(ifconfig | grep 'inet addr' | grep -v 127.0.0.1 | cut -d: -f2 | cut -d" " -f1)"
+FILE="$(ls /mnt/sdcard/concours-*)"
+SIZE="$(ls /mnt/sdcard/concours-*| grep 'concours' | cut -d- -f2 | cut -d. -f1)"
+/bin/Concours $IP $SIZE $FILE
