@@ -98,7 +98,7 @@ make install
 echo "Compilation de la chaine de compilation croisée"
 mkdir -p .build/tarballs
 cp ../../../Archive-crosstools/* .build/tarballs
-./ct-ng build.2
+#./ct-ng build.2
 
 echo "Mise en place de l'environnement de compilation croisée"
 DIR="$( cd "$( dirname "$0" )" && pwd )"
